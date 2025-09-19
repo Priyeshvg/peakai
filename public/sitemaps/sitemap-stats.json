@@ -1,0 +1,48 @@
+{
+  "totalEnterprises": 4900,
+  "totalStates": 11,
+  "totalSitemaps": 12,
+  "generatedAt": "2025-09-10T18:34:46.838Z",
+  "topStates": [
+    {
+      "state": "MAHARASHTRA",
+      "count": 800
+    },
+    {
+      "state": "KARNATAKA",
+      "count": 600
+    },
+    {
+      "state": "TAMIL NADU",
+      "count": 600
+    },
+    {
+      "state": "UTTAR PRADESH",
+      "count": 500
+    },
+    {
+      "state": "GUJARAT",
+      "count": 400
+    },
+    {
+      "state": "WEST BENGAL",
+      "count": 400
+    },
+    {
+      "state": "RAJASTHAN",
+      "count": 400
+    },
+    {
+      "state": "MADHYA PRADESH",
+      "count": 300
+    },
+    {
+      "state": "HARYANA",
+      "count": 300
+    },
+    {
+      "state": "PUNJAB",
+      "count": 300
+    }
+  ]
+}

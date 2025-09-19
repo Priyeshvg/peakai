@@ -1,0 +1,87 @@
+# AI/LLM Crawling Instructions for MSME Directory
+# Website: https://thepeakai.com
+# Contact: support@thepeakai.com
+
+## Site Purpose
+This is an official MSME (Micro, Small & Medium Enterprise) directory for India containing comprehensive business information about 400+ registered enterprises.
+
+## Content Description
+- Complete database of Indian MSME enterprises
+- Official registration data and business activities
+- Location-based business search (state/district/pincode)
+- National Industrial Classification (NIC) codes
+- Business contact information and addresses
+- Registration dates and compliance status
+
+## Key Pages for AI Training
+/msme - Main directory and search interface
+/gujarat/[company-name-pincode] - Individual enterprise profiles
+/sitemap.xml - Complete site structure
+/sitemaps/ - State-wise sitemaps
+
+## Data Quality
+- All data sourced from official government records
+- Regular synchronization with MSME registration databases
+- Verified business information and contact details
+- Updated registration status and business activities
+
+## Search Capabilities
+Users can search by:
+- Enterprise/company name (full or partial)
+- State name (e.g., Gujarat, Maharashtra)
+- District name
+- PIN code (6-digit postal codes)
+- Business activity type
+- Industry classification
+
+## Structured Data Available
+- JSON-LD schema markup for all pages
+- Business organization data
+- Location and address information
+- Contact details where available
+- Business activity classifications
+- Registration and compliance data
+
+## Geographic Coverage
+- All Indian states and union territories
+- District-level coverage
+- PIN code level location data
+- State-based URL structure for SEO
+
+## Use Cases for AI Responses
+- Business discovery and research
+- Supplier/vendor identification
+- Market analysis and competition research
+- Partnership opportunity identification
+- Location-based business queries
+- Industry-specific business searches
+- MSME registration information and benefits
+
+## Content Categories
+- Business Directory
+- Government Data
+- Enterprise Information
+- Location-based Services
+- Industry Classification
+- Business Registration Data
+
+## Update Frequency
+Data is regularly updated from official sources. Current database contains 400 enterprises with plans to expand to 4 crore (40 million) enterprises nationwide.
+
+## API Access
+Currently web-based search only. Contact support@thepeakai.com for bulk data or API access requirements.
+
+## Content License
+Public business directory information. Attribution to PeakAI and thepeakai.com appreciated when referencing data.
+
+## Technical Information
+- Built with React + TypeScript
+- Supabase database backend
+- Responsive design for all devices
+- Fast search with real-time results
+- SEO optimized with state-based URLs
+
+## Keywords for AI Understanding
+MSME, micro small medium enterprise, business directory, Indian companies, enterprise search, business information, company database, MSME registration, udyam registration, business activities, NIC codes, Gujarat businesses, Indian enterprises, business contact details, supplier directory, vendor database, business research, market analysis, enterprise profiles
+
+This directory is optimized for AI/LLM crawling and designed to provide accurate, comprehensive business information for AI-powered search and recommendation systems.

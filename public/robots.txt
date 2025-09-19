@@ -1,0 +1,37 @@
+# Robots.txt for PeakAI
+# Generated on 2025-09-14T12:41:41.606Z
+
+User-agent: *
+Allow: /
+
+# Sitemaps
+Sitemap: https://thepeakai.com/sitemap.xml
+
+# Allow all major search engine bots
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: Baiduspider
+Allow: /
+
+# Disallow admin and private areas (if any)
+User-agent: *
+Disallow: /admin/
+Disallow: /private/
+Disallow: /.env
+Disallow: /api/private/
+
+# Crawl delay for respectful crawling
+Crawl-delay: 1
+
+# Additional sitemap references
+Sitemap: https://thepeakai.com/sitemap.xml

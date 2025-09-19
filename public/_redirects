@@ -1,0 +1,44 @@
+# Handle MSME routes
+/msme    /index.html   200
+/*/msme    /index.html   200
+
+# Handle state-based enterprise routes (specific states)
+/gujarat/*    /index.html   200
+/maharashtra/*    /index.html   200
+/tamil-nadu/*    /index.html   200
+/karnataka/*    /index.html   200
+/uttar-pradesh/*    /index.html   200
+/west-bengal/*    /index.html   200
+/rajasthan/*    /index.html   200
+/madhya-pradesh/*    /index.html   200
+/andhra-pradesh/*    /index.html   200
+/telangana/*    /index.html   200
+/kerala/*    /index.html   200
+/punjab/*    /index.html   200
+/haryana/*    /index.html   200
+/bihar/*    /index.html   200
+/odisha/*    /index.html   200
+/jharkhand/*    /index.html   200
+/assam/*    /index.html   200
+/chhattisgarh/*    /index.html   200
+/uttarakhand/*    /index.html   200
+/himachal-pradesh/*    /index.html   200
+/jammu-and-kashmir/*    /index.html   200
+/ladakh/*    /index.html   200
+/goa/*    /index.html   200
+/manipur/*    /index.html   200
+/meghalaya/*    /index.html   200
+/nagaland/*    /index.html   200
+/sikkim/*    /index.html   200
+/tripura/*    /index.html   200
+/mizoram/*    /index.html   200
+/arunachal-pradesh/*    /index.html   200
+/delhi/*    /index.html   200
+/puducherry/*    /index.html   200
+/chandigarh/*    /index.html   200
+/dadra-and-nagar-haveli-and-daman-and-diu/*    /index.html   200
+/andaman-and-nicobar-islands/*    /index.html   200
+/lakshadweep/*    /index.html   200
+
+# Fallback for all other routes
+/*    /index.html   200
