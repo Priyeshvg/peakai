@@ -49,14 +49,6 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   themeColor: "#2563EB",
-  icons: {
-    icon: [
-      { url: '/favicon.ico', sizes: '16x16', type: 'image/x-icon' },
-      { url: '/favicon.svg', type: 'image/svg+xml' },
-    ],
-    shortcut: '/favicon.ico',
-    apple: '/favicon.svg',
-  },
 };
 
 export default function RootLayout({
