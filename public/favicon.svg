@@ -1,0 +1,5 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="32" height="32" rx="8" fill="#2563EB"/>
+  <!-- Zap icon - bold and clean for favicon -->
+  <path d="M20 4L10 16h5l-2 12 10-12h-5l2-12z" fill="white" stroke="white" stroke-width="1" stroke-linejoin="round"/>
+</svg>
