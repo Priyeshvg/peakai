@@ -1,14 +1,22 @@
 import { NextResponse } from 'next/server'
-import { getDatabase } from '@/lib/documentdb'
+
+const EC2_API_URL = process.env.EC2_API_URL || 'http://3.108.55.217:3000'
 
 export async function GET() {
   try {
-    const db = await getDatabase()
-    const collection = db.collection('records')
+    const response = await fetch(`${EC2_API_URL}/api/enterprises/count`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
 
-    const count = await collection.countDocuments()
+    if (!response.ok) {
+      throw new Error('Failed to fetch from EC2 API')
+    }
 
-    return NextResponse.json({ count })
+    const data = await response.json()
+    return NextResponse.json(data)
   } catch (error) {
     console.error('Count error:', error)
     return NextResponse.json(

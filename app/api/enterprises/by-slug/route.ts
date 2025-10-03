@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getDatabase } from '@/lib/documentdb'
-import type { Enterprise } from '@/lib/types'
+
+const EC2_API_URL = process.env.EC2_API_URL || 'http://3.108.55.217:3000'
 
 export async function GET(request: NextRequest) {
   try {
@@ -16,24 +16,28 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    const db = await getDatabase()
-    const collection = db.collection('records')
+    // Build the slug parameter for EC2 API
+    const fullSlug = `${state}/${city}/${slug}`.replace(/^\//, '')
 
-    // Build the canonical URL to match
-    const canonicalUrl = `/${state}/${city}/${slug}`
-
-    const enterprise = await collection.findOne({
-      'slugs.canonical_url': canonicalUrl,
+    const response = await fetch(`${EC2_API_URL}/api/enterprises/by-slug/${fullSlug}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
     })
 
-    if (!enterprise) {
-      return NextResponse.json(
-        { error: 'Enterprise not found' },
-        { status: 404 }
-      )
+    if (!response.ok) {
+      if (response.status === 404) {
+        return NextResponse.json(
+          { error: 'Enterprise not found' },
+          { status: 404 }
+        )
+      }
+      throw new Error('Failed to fetch from EC2 API')
     }
 
-    return NextResponse.json(enterprise as unknown as Enterprise)
+    const data = await response.json()
+    return NextResponse.json(data)
   } catch (error) {
     console.error('Get enterprise error:', error)
     return NextResponse.json(
