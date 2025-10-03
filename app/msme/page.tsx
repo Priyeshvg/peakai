@@ -10,6 +10,9 @@ export default function MSMEPage() {
   const [enterprises, setEnterprises] = useState<Enterprise[]>([])
   const [loading, setLoading] = useState(false)
   const [totalCount, setTotalCount] = useState(0)
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalResults, setTotalResults] = useState(0)
+  const [hasSearched, setHasSearched] = useState(false)
 
   useEffect(() => {
     fetch('/api/enterprises/count')
@@ -18,29 +21,41 @@ export default function MSMEPage() {
       .catch(err => console.error('Failed to fetch count:', err))
   }, [])
 
-  const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault()
-
-    const trimmedSearch = searchTerm.trim()
+  const performSearch = async (query: string, page: number = 1) => {
+    const trimmedSearch = query.trim()
     if (!trimmedSearch) {
       setEnterprises([])
+      setHasSearched(false)
       return
     }
 
     setLoading(true)
+    setHasSearched(true)
     try {
-      const res = await fetch(`/api/enterprises/search?q=${encodeURIComponent(trimmedSearch)}&limit=20`)
+      const res = await fetch(`/api/enterprises/search?q=${encodeURIComponent(trimmedSearch)}&page=${page}&limit=20`)
       if (!res.ok) {
         throw new Error('Search failed')
       }
       const data = await res.json()
       setEnterprises(data.enterprises || [])
+      setTotalResults(data.total || 0)
+      setCurrentPage(page)
     } catch (error) {
       console.error('Search error:', error)
       setEnterprises([])
+      setTotalResults(0)
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleSearch = async (e: React.FormEvent) => {
+    e.preventDefault()
+    performSearch(searchTerm, 1)
+  }
+
+  const handleLoadMore = () => {
+    performSearch(searchTerm, currentPage + 1)
   }
 
   return (
@@ -95,7 +110,7 @@ export default function MSMEPage() {
         {enterprises.length > 0 && (
           <div className="mt-8">
             <h2 className="text-xl font-semibold mb-4 text-brand-900">
-              Found {enterprises.length} enterprises
+              Showing {enterprises.length} of {totalResults} enterprises
             </h2>
             <div className="grid gap-4">
               {enterprises.map((enterprise) => (
@@ -116,6 +131,19 @@ export default function MSMEPage() {
                 </Link>
               ))}
             </div>
+
+            {/* Load More Button */}
+            {totalResults > enterprises.length && (
+              <div className="mt-8 text-center">
+                <button
+                  onClick={handleLoadMore}
+                  disabled={loading}
+                  className="px-8 py-3 bg-accent-600 text-white rounded-xl hover:bg-accent-700 transition-all duration-200 shadow-lg hover:shadow-xl disabled:opacity-50 font-semibold"
+                >
+                  {loading ? 'Loading...' : 'Load More Results'}
+                </button>
+              </div>
+            )}
           </div>
         )}
 
@@ -139,13 +167,14 @@ export default function MSMEPage() {
           </div>
         )}
 
-        {!loading && enterprises.length === 0 && searchTerm && (
+        {!loading && enterprises.length === 0 && hasSearched && (
           <div className="mt-8 text-center py-8 bg-white/30 backdrop-blur-lg rounded-2xl shadow-xl border border-white/30">
             <p className="text-brand-700 mb-4 font-medium">No results found for "{searchTerm}"</p>
             <button
               onClick={() => {
                 setSearchTerm('')
                 setEnterprises([])
+                setHasSearched(false)
               }}
               className="px-6 py-3 bg-accent-600 text-white rounded-xl hover:bg-accent-700 transition-all duration-200 shadow-lg hover:shadow-xl font-semibold"
             >
