@@ -11,15 +11,30 @@ export default function BlogPage() {
   const [categories, setCategories] = useState<{ name: string; count: number; icon: any }[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("All Posts");
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchData() {
       try {
         setLoading(true);
+        setError(null);
+
+        console.log('Fetching blogs from Supabase...');
+        console.log('Env check:', {
+          hasUrl: !!process.env.NEXT_PUBLIC_SUPABASE_URL,
+          hasKey: !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+        });
+
         const [blogs, categoryData] = await Promise.all([
           getBlogs(),
           getBlogCategories()
         ]);
+
+        console.log('Fetched blogs:', blogs.length);
+
+        if (blogs.length === 0) {
+          setError('No blog posts found. Please check Supabase configuration.');
+        }
 
         setBlogPosts(blogs);
 
@@ -45,6 +60,7 @@ export default function BlogPage() {
         setCategories(formattedCategories);
       } catch (error) {
         console.error('Error fetching blog data:', error);
+        setError('Failed to load blog posts. Please try again later.');
       } finally {
         setLoading(false);
       }
@@ -95,6 +111,38 @@ export default function BlogPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-accent-600 mx-auto"></div>
             <p className="text-brand-600 mt-4">Loading blogs...</p>
+          </div>
+        </section>
+      ) : error || blogPosts.length === 0 ? (
+        <section className="py-20">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div className="bg-yellow-50 border-2 border-yellow-200 rounded-2xl p-8">
+              <h3 className="text-2xl font-bold text-brand-900 mb-4">
+                {error || 'No blog posts available yet'}
+              </h3>
+              <p className="text-brand-600 mb-6">
+                We're currently setting up our blog content. Please check back soon for insightful articles on sales and recruiting strategies.
+              </p>
+              <div className="text-left bg-white p-6 rounded-xl border border-gray-200">
+                <p className="text-sm font-semibold text-brand-900 mb-2">For Administrators:</p>
+                <p className="text-xs text-brand-600 mb-2">
+                  If you're seeing this message, please ensure your Netlify environment variables are configured:
+                </p>
+                <ul className="text-xs text-brand-600 space-y-1 ml-4">
+                  <li>• NEXT_PUBLIC_SUPABASE_URL</li>
+                  <li>• NEXT_PUBLIC_SUPABASE_ANON_KEY</li>
+                </ul>
+                <p className="text-xs text-brand-600 mt-2">
+                  Check browser console for detailed error messages.
+                </p>
+              </div>
+              <Link
+                href="/"
+                className="inline-block mt-6 bg-accent-600 text-white px-6 py-3 rounded-lg hover:bg-accent-700 transition-colors font-semibold"
+              >
+                Go to Homepage
+              </Link>
+            </div>
           </div>
         </section>
       ) : (
