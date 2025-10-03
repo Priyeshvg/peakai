@@ -16,10 +16,8 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Build the slug parameter for EC2 API
-    const fullSlug = `${state}/${city}/${slug}`.replace(/^\//, '')
-
-    const response = await fetch(`${EC2_API_URL}/api/enterprises/by-slug/${fullSlug}`, {
+    // Call EC2 API with separate path parameters
+    const response = await fetch(`${EC2_API_URL}/api/enterprises/by-slug/${state}/${city}/${slug}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
