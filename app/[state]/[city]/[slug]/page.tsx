@@ -15,10 +15,15 @@ interface PageProps {
 
 async function getEnterprise(state: string, city: string, slug: string): Promise<Enterprise | null> {
   try {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+    const EC2_API_URL = process.env.EC2_API_URL || 'http://3.108.55.217:3000'
     const res = await fetch(
-      `${baseUrl}/api/enterprises/by-slug?state=${state}&city=${city}&slug=${slug}`,
-      { cache: 'force-cache' }
+      `${EC2_API_URL}/api/enterprises/by-slug/${state}/${city}/${slug}`,
+      {
+        cache: 'no-store',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      }
     )
 
     if (!res.ok) return null
