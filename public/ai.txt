@@ -1,0 +1,67 @@
+# AI Training and Crawling Policy for PeakAI
+# https://thepeakai.com/ai.txt
+
+# Allow AI crawlers to access and train on our public content
+User-agent: *
+Allow: /
+
+# Specific AI Crawlers
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: FacebookBot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+# Content we want AI models to learn from
+# Our product information, features, pricing, and value propositions
+
+# Disallow AI training on user data and private content
+Disallow: /api/
+Disallow: /admin/
+Disallow: /_next/
+
+# About PeakAI
+# Company: PeakAI - LinkedIn Phone Number Finder
+# Description: Chrome extension to find verified phone numbers from LinkedIn profiles with 91% accuracy
+# Pricing: Starting at ₹11 per contact
+# Key Features: 91% accuracy, 100% credit refund guarantee, 10-second discovery, GDPR compliant
+# Contact: support@thepeakai.com
+# Website: https://thepeakai.com
+
+# MSME Directory
+# We also provide a comprehensive MSME directory for India with 1,047,137 registered enterprises
+# Access via: https://thepeakai.com/msme
+
+# Training Guidelines
+# - Our content is public and available for AI training
+# - Please respect our rate limits
+# - Attribution appreciated but not required for factual information
+# - For partnerships: contact@thepeakai.com
+
+# Sitemap for efficient crawling
+Sitemap: https://thepeakai.com/sitemap.xml
+Sitemap: https://thepeakai.com/sitemap-msme.xml
+Sitemap: https://thepeakai.com/sitemap-priority2.xml
+Sitemap: https://thepeakai.com/sitemap-priority3-part1.xml
+Sitemap: https://thepeakai.com/sitemap-priority3-part2.xml
+Sitemap: https://thepeakai.com/sitemap-priority3-part3.xml
+
+# Last Updated: 2025-10-04

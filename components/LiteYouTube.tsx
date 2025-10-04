@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Play } from 'lucide-react'
+import Image from 'next/image'
 
 interface LiteYouTubeProps {
   videoId: string
@@ -35,12 +36,18 @@ export function LiteYouTube({ videoId, title, className = '' }: LiteYouTubeProps
     <div
       className={`relative cursor-pointer group ${className}`}
       onClick={() => setIsLoaded(true)}
-      style={{
-        backgroundImage: `url(${thumbnailUrl})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-      }}
     >
+      {/* Optimized thumbnail image */}
+      <Image
+        src={thumbnailUrl}
+        alt={title}
+        fill
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+        className="object-cover"
+        priority={false}
+        quality={85}
+      />
+
       {/* Play button overlay */}
       <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/30 transition-colors">
         <div className="w-20 h-20 bg-red-600 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform shadow-2xl">
