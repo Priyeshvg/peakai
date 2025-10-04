@@ -728,11 +728,349 @@ pm2 logs udyam-api
 
 ---
 
+## 📊 MSME Sitemap Strategy & Workflow
+
+### Current Sitemap Coverage (October 2024):
+
+**Total URLs Indexed: 46,953**
+
+| Sitemap | URLs | Priority | File Location | Status |
+|---------|------|----------|---------------|--------|
+| sitemap.xml | 1,051 | - | `app/sitemap.ts` | ✅ Live |
+| sitemap-msme.xml | 37 | - | `app/sitemap-msme.xml/route.ts` | ✅ Live |
+| sitemap-enterprises.xml | 4,764 | 2 | `public/sitemap-enterprises.xml` | ✅ Live |
+| sitemap-priority3.xml | 41,101 | 3 | `public/sitemap-priority3.xml` | ✅ Live |
+
+### Priority Distribution Across 1,047,137 Enterprises:
+
+```
+Priority 2:  4,764 enterprises (Karnataka)
+Priority 3:  41,101 enterprises (Delhi)
+Priority 4:  33,554 enterprises
+Priority 5:  45,553 enterprises
+Priority 6:  37,272 enterprises
+Priority 7:  34,228 enterprises
+Priority 8:  39,924 enterprises
+Priority 9:  31,860 enterprises
+Priority 10: 46,427 enterprises
+Priority 11: 43,691 enterprises
+Priority 12: 36,652 enterprises
+Priority 13: 39,769 enterprises
+Priority 14: 23,913 enterprises
+Priority 15: 34,062 enterprises
+Priority 16: 25,867 enterprises
+Priority 17: 27,782 enterprises
+Priority 18: 25,948 enterprises
+Priority 19: 31,755 enterprises
+Priority 20: 43,941 enterprises
+Priority 21: 36,697 enterprises
+Priority 22: 25,680 enterprises
+Priority 23: 40,706 enterprises
+Priority 24: 47,969 enterprises
+Priority 25: 27,613 enterprises
+Priority 999: 220,409 enterprises (lowest priority)
+```
+
+### 🔄 Complete Workflow: Adding New MSMEs & Generating Sitemaps
+
+#### Step 1: Add New MSME Data to DocumentDB
+
+**File:** Custom import script (varies based on data source)
+
+```javascript
+// Example structure for bulk import
+const { MongoClient } = require('mongodb');
+
+const DOCUMENTDB_URI = process.env.DOCUMENTDB_URI;
+
+async function importMSMEs(data) {
+  const client = new MongoClient(DOCUMENTDB_URI, {
+    tls: true,
+    tlsCAFile: '/path/to/global-bundle.pem',
+    tlsAllowInvalidHostnames: true,
+  });
+
+  await client.connect();
+  const db = client.db('udyam');
+  const collection = db.collection('records');
+
+  // Insert with priority assignment
+  const enrichedData = data.map(enterprise => ({
+    ...enterprise,
+    indexing: {
+      priority: calculatePriority(enterprise), // Your priority logic
+      state_rank: calculateStateRank(enterprise),
+      // ... other indexing fields
+    },
+    slugs: {
+      canonical_url: generateCanonicalUrl(enterprise),
+      // ... other slugs
+    },
+    seo: {
+      last_modified: new Date().toISOString().split('T')[0],
+      changefreq: 'monthly',
+      priority: 0.7,
+    }
+  }));
+
+  await collection.insertMany(enrichedData);
+  await client.close();
+}
+```
+
+**Required Database Schema Fields:**
+- `registration_number` (string) - UDYAM registration number
+- `name_of_enterprise` (string) - Company name
+- `address` (object):
+  - `state` (string) - Full state name
+  - `state_slug` (string) - URL-friendly state name
+  - `state_code` (string) - 2-letter state code
+  - `city` (string) - City name
+  - `city_slug` (string) - URL-friendly city name
+- `indexing` (object):
+  - `priority` (number) - SEO priority (2-999)
+  - `state_rank` (number) - Rank within state
+- `slugs` (object):
+  - `canonical_url` (string) - Format: `/state-slug/city-slug/company-slug`
+- `seo` (object):
+  - `last_modified` (string) - YYYY-MM-DD format
+  - `changefreq` (string) - 'weekly' or 'monthly'
+  - `priority` (number) - 0.5-0.9
+
+#### Step 2: Set Priority Logic
+
+**File:** Custom script or import logic
+
+Priority assignment criteria (customize as needed):
+- Priority 2-3: High-value states (Karnataka, Delhi)
+- Priority 4-25: Mid-tier states
+- Priority 999: Lowest priority/incomplete data
+
+**Example Priority Assignment:**
+```javascript
+function calculatePriority(enterprise) {
+  const state = enterprise.address.state_slug;
+
+  // Define your priority mapping
+  const statePriorities = {
+    'karnataka': 2,
+    'delhi': 3,
+    'maharashtra': 4,
+    'tamil-nadu': 5,
+    // ... add more states
+  };
+
+  return statePriorities[state] || 999;
+}
+```
+
+#### Step 3: Generate Static Sitemap for New Priority
+
+**File:** `scripts/generate-sitemap-priority{N}.js`
+
+```javascript
+const fs = require('fs');
+
+async function generateSitemap() {
+  const baseUrl = 'https://thepeakai.com';
+  const priority = 4; // Change this for each priority level
+
+  console.log(`Fetching priority ${priority} enterprises from API...`);
+
+  const url = `http://3.108.55.217:3000/api/enterprises/top-priority?limit=50000&priority=${priority}`;
+
+  const response = await fetch(url);
+  const data = await response.json();
+  const enterprises = data.enterprises || [];
+
+  console.log(`Received ${enterprises.length} enterprises`);
+
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${enterprises.map(ent => `  <url>
+    <loc>${baseUrl}${ent.slugs.canonical_url}</loc>
+    <lastmod>${ent.seo?.last_modified || new Date().toISOString().split('T')[0]}</lastmod>
+    <changefreq>${ent.seo?.changefreq || 'monthly'}</changefreq>
+    <priority>${ent.seo?.priority || 0.7}</priority>
+  </url>`).join('\n')}
+</urlset>`;
+
+  fs.writeFileSync(`public/sitemap-priority${priority}.xml`, xml);
+  console.log(`✅ Generated sitemap with ${enterprises.length} URLs`);
+  console.log(`📁 File size: ${(xml.length / 1024).toFixed(2)} KB`);
+}
+
+generateSitemap().catch(console.error);
+```
+
+**Run the script:**
+```bash
+cd /Users/priyeshgandhi/peakai
+node scripts/generate-sitemap-priority4.js  # Change number for each priority
+```
+
+#### Step 4: Update robots.ts
+
+**File:** `app/robots.ts`
+
+```typescript
+import { MetadataRoute } from 'next'
+
+export default function robots(): MetadataRoute.Robots {
+  return {
+    rules: [
+      {
+        userAgent: '*',
+        allow: '/',
+        disallow: [
+          '/api/',
+          '/_next/',
+          '/admin/',
+        ],
+      },
+    ],
+    sitemap: [
+      'https://thepeakai.com/sitemap.xml',
+      'https://thepeakai.com/sitemap-msme.xml',
+      'https://thepeakai.com/sitemap-enterprises.xml',
+      'https://thepeakai.com/sitemap-priority3.xml',
+      'https://thepeakai.com/sitemap-priority4.xml',  // Add new sitemap here
+      // Add more as you create them
+    ],
+  }
+}
+```
+
+#### Step 5: Update Sitemap Index
+
+**File:** `app/sitemap-index.xml/route.ts`
+
+```typescript
+export async function GET() {
+  const baseUrl = 'https://thepeakai.com'
+  const currentDate = new Date().toISOString()
+
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <sitemap>
+    <loc>${baseUrl}/sitemap.xml</loc>
+    <lastmod>${currentDate}</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>${baseUrl}/sitemap-msme.xml</loc>
+    <lastmod>${currentDate}</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>${baseUrl}/sitemap-enterprises.xml</loc>
+    <lastmod>${currentDate}</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>${baseUrl}/sitemap-priority3.xml</loc>
+    <lastmod>${currentDate}</lastmod>
+  </sitemap>
+  <sitemap>
+    <loc>${baseUrl}/sitemap-priority4.xml</loc>  <!-- Add new sitemap here -->
+    <lastmod>${currentDate}</lastmod>
+  </sitemap>
+</sitemapindex>`
+
+  return new Response(xml, {
+    headers: {
+      'Content-Type': 'application/xml',
+      'Cache-Control': 'public, max-age=3600, s-maxage=3600',
+    },
+  })
+}
+```
+
+#### Step 6: Deploy to Production
+
+```bash
+# From project root
+cd /Users/priyeshgandhi/peakai
+
+# Verify sitemap files exist
+ls -lh public/sitemap-*.xml
+
+# Commit and push to GitHub
+git add public/sitemap-priority*.xml app/robots.ts app/sitemap-index.xml/route.ts
+git commit -m "Add priority N sitemap with X,XXX URLs"
+git push origin main
+
+# Netlify will auto-deploy (usually takes 1-2 minutes)
+```
+
+#### Step 7: Verify & Submit to Google
+
+```bash
+# Test the sitemap loads
+curl -I https://thepeakai.com/sitemap-priority4.xml
+
+# Count URLs in the new sitemap
+curl -s https://thepeakai.com/sitemap-priority4.xml | grep -c "<url>"
+```
+
+**Submit to Google Search Console:**
+1. Go to https://search.google.com/search-console
+2. Select property: thepeakai.com
+3. Navigate to "Sitemaps" in left sidebar
+4. Add new sitemap: `sitemap-priority4.xml`
+5. Click "Submit"
+
+### 🔧 EC2 API Maintenance
+
+**Update API Server** (if adding new endpoints):
+
+**File:** `~/Downloads/udyam-api-server-updated.js`
+
+```bash
+# From local machine
+scp -i ~/Downloads/udyam.pem ~/Downloads/udyam-api-server-updated.js ec2-user@3.108.55.217:/home/ec2-user/udyam-api-server.js
+
+# SSH into EC2
+ssh -i ~/Downloads/udyam.pem ec2-user@3.108.55.217
+
+# Restart the API
+pm2 restart udyam-api
+
+# Check status
+pm2 status
+pm2 logs udyam-api --lines 50
+
+# Exit
+exit
+```
+
+**Key API Endpoints:**
+- `/health` - Health check
+- `/api/enterprises/count` - Total count
+- `/api/enterprises/priority-counts` - Breakdown by priority
+- `/api/enterprises/top-priority?limit=X&priority=N` - Fetch by priority
+- `/api/enterprises/search?q=X&page=N` - Search
+- `/api/enterprises/states` - All states
+- `/api/enterprises/cities/:state` - Cities in state
+- `/api/enterprises/by-slug/:state/:city/:slug` - Enterprise details
+
+### 📈 Sitemap Growth Plan
+
+**Monthly Schedule:**
+- Month 1: Priority 2 + 3 (45,865 URLs) ✅ DONE
+- Month 2: Priority 4-5 (79,107 URLs)
+- Month 3: Priority 6-7 (71,500 URLs)
+- Month 4: Priority 8-10 (118,211 URLs)
+- Month 5: Priority 11-15 (203,945 URLs)
+- Month 6: Priority 16-25 (307,950 URLs)
+- Month 7: Priority 999 (220,409 URLs)
+
+**Target: 1,047,137 URLs indexed within 7 months**
+
+---
+
 **Last Updated:** 2025-10-04
-**Total Development Time:** ~6 hours
-**Lines of Code:** ~3,000+
+**Total Development Time:** ~8 hours
+**Lines of Code:** ~3,500+
 **Database Records:** 1,047,137 enterprises
-**Indexed URLs:** 25,200+ for SEO
+**Indexed URLs:** 46,953 for SEO (Month 1 complete)
 
 ---
 
@@ -742,9 +1080,11 @@ All critical features implemented and tested:
 - ✅ MSME search with 1M+ records
 - ✅ Fast search performance (20-100ms)
 - ✅ Complete hierarchical browsing (states → cities → enterprises)
-- ✅ 25,000+ URLs indexed for SEO
+- ✅ 46,953 URLs indexed for SEO (growing monthly)
 - ✅ Blog system with rich content
 - ✅ Responsive design
 - ✅ Production-grade error handling
 - ✅ Optimized database queries
+- ✅ Automated sitemap generation workflow
+- ✅ Priority-based SEO indexing strategy
 - ✅ Comprehensive sitemaps

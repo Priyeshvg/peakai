@@ -4,12 +4,12 @@ export async function GET() {
   try {
     const EC2_API_URL = process.env.EC2_API_URL || 'http://3.108.55.217:3000'
 
-    // Fetch top 25,000 priority 2 enterprises
+    // Fetch top 10,000 priority 2 enterprises (reduced for Netlify timeout)
     const response = await fetch(
-      `${EC2_API_URL}/api/enterprises/top-priority?limit=25000&priority=2`,
+      `${EC2_API_URL}/api/enterprises/top-priority?limit=10000&priority=2`,
       {
         cache: 'no-store',
-        signal: AbortSignal.timeout(45000), // 45 second timeout
+        signal: AbortSignal.timeout(25000), // 25 second timeout
       }
     )
 

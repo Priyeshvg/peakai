@@ -17,6 +17,7 @@ export default function robots(): MetadataRoute.Robots {
       'https://thepeakai.com/sitemap.xml',
       'https://thepeakai.com/sitemap-msme.xml',
       'https://thepeakai.com/sitemap-enterprises.xml',
+      'https://thepeakai.com/sitemap-priority3.xml',
     ],
   }
 }
