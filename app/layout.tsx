@@ -233,6 +233,12 @@ export default function RootLayout({
           }}
         />
 
+        {/* Shown.io Metrics */}
+        <Script
+          src="https://shown.io/metrics/Lj3brrWL3l"
+          strategy="lazyOnload"
+        />
+
         <Layout>{children}</Layout>
       </body>
     </html>
