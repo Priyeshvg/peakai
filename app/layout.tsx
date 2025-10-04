@@ -132,6 +132,72 @@ export default function RootLayout({
             })
           }}
         />
+
+        {/* Structured Data - WebSite for Search */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              "name": "PeakAI",
+              "url": "https://thepeakai.com",
+              "potentialAction": {
+                "@type": "SearchAction",
+                "target": {
+                  "@type": "EntryPoint",
+                  "urlTemplate": "https://thepeakai.com/msme?q={search_term_string}"
+                },
+                "query-input": "required name=search_term_string"
+              }
+            })
+          }}
+        />
+
+        {/* Structured Data - FAQPage for better SEO */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              "mainEntity": [
+                {
+                  "@type": "Question",
+                  "name": "What is PeakAI?",
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "PeakAI is a Chrome extension that helps sales teams and recruiters find verified phone numbers from LinkedIn profiles with 91% accuracy. Only ₹11 for first 100 contacts with 100% credit refund guarantee for wrong numbers."
+                  }
+                },
+                {
+                  "@type": "Question",
+                  "name": "How accurate is PeakAI?",
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "PeakAI guarantees 91% accuracy for phone numbers. We offer 100% credit refund for any wrong numbers found."
+                  }
+                },
+                {
+                  "@type": "Question",
+                  "name": "How much does PeakAI cost?",
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "PeakAI offers a trial pack of 100 contacts for just ₹1,100 (₹11 per contact). Monthly plans start at ₹7,500 for 1,250 contacts."
+                  }
+                },
+                {
+                  "@type": "Question",
+                  "name": "What is the MSME directory?",
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "PeakAI provides a comprehensive directory of 1,047,137 registered MSME enterprises in India with contact information, location, and business details."
+                  }
+                }
+              ]
+            })
+          }}
+        />
       </head>
       <body className={`${inter.variable} font-sans antialiased`}>
         {/* Microsoft Clarity - Lazy load for better performance */}

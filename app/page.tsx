@@ -165,17 +165,21 @@ function RotatingTestimonials() {
         ))}
       </div>
       
-      {/* Pagination Dots */}
-      <div className="flex justify-center mt-6 space-x-2">
+      {/* Pagination Dots - Larger tap targets for mobile */}
+      <div className="flex justify-center mt-6 space-x-4">
         {testimonials.map((_, index) => (
           <button
             key={index}
             onClick={() => setCurrentIndex(index)}
-            className={`w-3 h-3 rounded-full transition-colors duration-300 ${
-              currentIndex === index ? 'bg-accent-600' : 'bg-brand-200'
+            className={`p-3 rounded-full transition-colors duration-300 ${
+              currentIndex === index ? 'bg-accent-600/20' : 'bg-transparent'
             }`}
             aria-label={`Show testimonial ${index + 1}`}
-          />
+          >
+            <span className={`block w-3 h-3 rounded-full transition-colors duration-300 ${
+              currentIndex === index ? 'bg-accent-600' : 'bg-brand-200'
+            }`} />
+          </button>
         ))}
       </div>
     </div>
