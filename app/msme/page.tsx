@@ -21,7 +21,7 @@ export default function MSMEPage() {
       .catch(err => console.error('Failed to fetch count:', err))
   }, [])
 
-  const performSearch = async (query: string, page: number = 1) => {
+  const performSearch = async (query: string, page: number = 1, append: boolean = false) => {
     const trimmedSearch = query.trim()
     if (!trimmedSearch) {
       setEnterprises([])
@@ -37,13 +37,21 @@ export default function MSMEPage() {
         throw new Error('Search failed')
       }
       const data = await res.json()
-      setEnterprises(data.enterprises || [])
+
+      if (append) {
+        setEnterprises(prev => [...prev, ...(data.enterprises || [])])
+      } else {
+        setEnterprises(data.enterprises || [])
+      }
+
       setTotalResults(data.total || 0)
       setCurrentPage(page)
     } catch (error) {
       console.error('Search error:', error)
-      setEnterprises([])
-      setTotalResults(0)
+      if (!append) {
+        setEnterprises([])
+        setTotalResults(0)
+      }
     } finally {
       setLoading(false)
     }
@@ -51,11 +59,11 @@ export default function MSMEPage() {
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault()
-    performSearch(searchTerm, 1)
+    performSearch(searchTerm, 1, false)
   }
 
   const handleLoadMore = () => {
-    performSearch(searchTerm, currentPage + 1)
+    performSearch(searchTerm, currentPage + 1, true)
   }
 
   return (

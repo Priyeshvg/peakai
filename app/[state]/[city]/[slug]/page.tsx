@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import { Building2, MapPin, Calendar, Users, Briefcase } from 'lucide-react'
+import { Building2, MapPin, Calendar, Users, Briefcase, Mail, Phone, FileText } from 'lucide-react'
 import type { Enterprise } from '@/lib/types'
 import { generateMetadata as genMeta, generateStructuredData } from '@/lib/metadata'
 
@@ -139,14 +139,21 @@ export default async function EnterpriseDetailPage({ params }: PageProps) {
             {/* Location */}
             <div className="mt-8 flex items-start gap-3">
               <MapPin className="w-6 h-6 text-accent-600 mt-1" />
-              <div>
-                <h2 className="text-xl font-semibold text-brand-900">Location</h2>
-                <p className="text-brand-700 mt-2">
-                  {enterprise.address.city}, {enterprise.address.district}
-                </p>
-                <p className="text-brand-600">
-                  {enterprise.address.state} - {enterprise.address.pin}
-                </p>
+              <div className="flex-1">
+                <h2 className="text-xl font-semibold text-brand-900 mb-2">Location</h2>
+                <div className="bg-brand-50 rounded-lg p-4">
+                  {enterprise.address.flat && <p className="text-brand-700">{enterprise.address.flat}</p>}
+                  {enterprise.address.building && <p className="text-brand-700">{enterprise.address.building}</p>}
+                  {enterprise.address.village && <p className="text-brand-700">{enterprise.address.village}</p>}
+                  {enterprise.address.block && <p className="text-brand-700">{enterprise.address.block}</p>}
+                  {enterprise.address.road && <p className="text-brand-700">{enterprise.address.road}</p>}
+                  <p className="text-brand-900 font-medium mt-2">
+                    {enterprise.address.city}, {enterprise.address.district}
+                  </p>
+                  <p className="text-brand-700">
+                    {enterprise.address.state} - {enterprise.address.pin}
+                  </p>
+                </div>
               </div>
             </div>
 
@@ -183,17 +190,73 @@ export default async function EnterpriseDetailPage({ params }: PageProps) {
                 <h2 className="text-xl font-semibold text-brand-900">Important Dates</h2>
                 <div className="mt-2 space-y-1">
                   <p className="text-brand-700">
-                    <span className="font-medium">Registration:</span> {enterprise.dates.registration}
+                    <span className="font-medium">Registration:</span> {enterprise.dates.registration || 'N/A'}
                   </p>
                   <p className="text-brand-700">
-                    <span className="font-medium">Incorporation:</span> {enterprise.dates.incorporation}
+                    <span className="font-medium">Incorporation:</span> {enterprise.dates.incorporation || 'N/A'}
                   </p>
-                  <p className="text-brand-700">
-                    <span className="font-medium">Commencement:</span> {enterprise.dates.commencement}
-                  </p>
+                  {enterprise.dates.commencement && (
+                    <p className="text-brand-700">
+                      <span className="font-medium">Commencement:</span> {enterprise.dates.commencement}
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
+
+            {/* Contact Information */}
+            {enterprise.contact && (enterprise.contact.email || enterprise.contact.mobile) && (
+              <div className="mt-8">
+                <h2 className="text-xl font-semibold text-brand-900 mb-4">Contact Information</h2>
+                <div className="grid md:grid-cols-2 gap-4">
+                  {enterprise.contact.email && (
+                    <div className="flex items-center gap-3 bg-brand-50 rounded-lg p-4">
+                      <Mail className="w-5 h-5 text-accent-600" />
+                      <div>
+                        <p className="text-sm text-brand-600">Email</p>
+                        <p className="text-brand-900 font-medium">{enterprise.contact.email}</p>
+                      </div>
+                    </div>
+                  )}
+                  {enterprise.contact.mobile && (
+                    <div className="flex items-center gap-3 bg-brand-50 rounded-lg p-4">
+                      <Phone className="w-5 h-5 text-accent-600" />
+                      <div>
+                        <p className="text-sm text-brand-600">Mobile</p>
+                        <p className="text-brand-900 font-medium">{enterprise.contact.mobile}</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Government Details */}
+            {enterprise.government && (enterprise.government.dic || enterprise.government.msme_dfo) && (
+              <div className="mt-8">
+                <h2 className="text-xl font-semibold text-brand-900 mb-4">Government Office Details</h2>
+                <div className="grid md:grid-cols-2 gap-4">
+                  {enterprise.government.dic && (
+                    <div className="flex items-center gap-3 bg-brand-50 rounded-lg p-4">
+                      <FileText className="w-5 h-5 text-accent-600" />
+                      <div>
+                        <p className="text-sm text-brand-600">DIC</p>
+                        <p className="text-brand-900 font-medium">{enterprise.government.dic}</p>
+                      </div>
+                    </div>
+                  )}
+                  {enterprise.government.msme_dfo && (
+                    <div className="flex items-center gap-3 bg-brand-50 rounded-lg p-4">
+                      <FileText className="w-5 h-5 text-accent-600" />
+                      <div>
+                        <p className="text-sm text-brand-600">MSME DFO</p>
+                        <p className="text-brand-900 font-medium">{enterprise.government.msme_dfo}</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
 
             {/* Back to Search */}
             <div className="mt-12 pt-8 border-t border-brand-200">
