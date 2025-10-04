@@ -153,6 +153,56 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   // ============================================
+  // MSME DIRECTORY PAGES
+  // ============================================
+  let msmeRoutes: MetadataRoute.Sitemap = []
+
+  try {
+    const EC2_API_URL = process.env.EC2_API_URL || 'http://3.108.55.217:3000'
+
+    // Fetch all states
+    const statesRes = await fetch(`${EC2_API_URL}/api/enterprises/states`, {
+      cache: 'no-store',
+    })
+
+    if (statesRes.ok) {
+      const states = await statesRes.json()
+
+      // Add state pages
+      for (const state of states) {
+        msmeRoutes.push({
+          url: `${baseUrl}/${state.state_slug}`,
+          lastModified: currentDate,
+          changeFrequency: 'weekly' as const,
+          priority: 0.7,
+        })
+
+        // Fetch cities for each state (limit to top 20 per state for sitemap size)
+        const citiesRes = await fetch(`${EC2_API_URL}/api/enterprises/cities/${state.state_slug}`, {
+          cache: 'no-store',
+        })
+
+        if (citiesRes.ok) {
+          const cities = await citiesRes.json()
+          const topCities = cities.slice(0, 20) // Top 20 cities per state
+
+          for (const city of topCities) {
+            msmeRoutes.push({
+              url: `${baseUrl}/${state.state_slug}/${city.city_slug}`,
+              lastModified: currentDate,
+              changeFrequency: 'weekly' as const,
+              priority: 0.6,
+            })
+          }
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Error fetching MSME routes for sitemap:', error)
+    // Continue without MSME routes if there's an error
+  }
+
+  // ============================================
   // COMBINE ALL ROUTES
   // ============================================
   return [
@@ -160,6 +210,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...productPages,
     ...contentPages,
     ...blogRoutes,
+    ...msmeRoutes,
     ...businessPages,
     ...supportPages,
     ...legalPages,

@@ -6,9 +6,37 @@
 export function parseBlogContent(content: string): string {
   if (!content) return ''
 
+  // Check if content is already HTML (contains HTML tags)
+  const hasHTMLTags = /<[a-z][\s\S]*>/i.test(content)
+
+  if (hasHTMLTags) {
+    // Content is already HTML, just add internal linking
+    let html = content
+
+    // Internal linking - convert mentions of product names to links
+    const internalLinks: { [key: string]: string } = {
+      'PeakAI': '/',
+      'LeadsAI': '/leads-ai',
+      'Director Phone': '/director-phone',
+      'Unlimited Email': '/unlimited-email',
+      'Features': '/features',
+      'Pricing': '/pricing',
+      'Partners': '/partners',
+      'MSME': '/msme',
+    }
+
+    Object.entries(internalLinks).forEach(([text, url]) => {
+      // Only link if not already in a link or heading
+      const regex = new RegExp(`(?<!<a[^>]*>)(?<!<h[1-6][^>]*>)\\b(${text})\\b(?![^<]*<\\/a>)(?![^<]*<\\/h[1-6]>)`, 'gi')
+      html = html.replace(regex, `<a href="${url}" class="internal-link text-accent-600 hover:text-accent-700 underline">${text}</a>`)
+    })
+
+    return html
+  }
+
   let html = content
 
-  // 1. Escape HTML entities first
+  // 1. Escape HTML entities first (only for markdown content)
   html = html
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')

@@ -258,15 +258,28 @@ export default async function EnterpriseDetailPage({ params }: PageProps) {
               </div>
             )}
 
-            {/* Back to Search */}
-            <div className="mt-12 pt-8 border-t border-brand-200">
-              <Link
-                href="/msme"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-accent-600 text-white rounded-lg hover:bg-accent-700 transition-colors"
-              >
-                ← Back to Search
-              </Link>
-            </div>
+          </div>
+
+          {/* Navigation Links */}
+          <div className="mt-8 flex flex-wrap gap-4">
+            <Link
+              href="/msme"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-accent-600 text-white rounded-lg hover:bg-accent-700 transition-colors"
+            >
+              ← Back to Search
+            </Link>
+            <Link
+              href={`/${state}/${city}`}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-brand-100 text-brand-900 rounded-lg hover:bg-brand-200 transition-colors border border-brand-300"
+            >
+              More in {city.replace(/-/g, ' ')}
+            </Link>
+            <Link
+              href={`/${state}`}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-brand-100 text-brand-900 rounded-lg hover:bg-brand-200 transition-colors border border-brand-300"
+            >
+              Browse {state.replace(/-/g, ' ')}
+            </Link>
           </div>
         </div>
       </div>
