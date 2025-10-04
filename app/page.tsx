@@ -7,6 +7,7 @@ import { ContactModal } from '@/components/ContactModal'
 import { DetailedCaseStudies } from '@/components/DetailedCaseStudies'
 import { FreeTrialWidget } from '@/components/FreeTrialWidget'
 import { TrustBadges } from '@/components/TrustBadges'
+import { LiteYouTube } from '@/components/LiteYouTube'
 
 type Currency = 'INR' | 'USD';
 type BillingCycle = 'monthly' | 'annual';
@@ -390,14 +391,11 @@ export default function HomePage() {
                 <div className="relative aspect-video rounded-2xl overflow-hidden shadow-2xl bg-accent-50">
                   <div className="absolute inset-0 bg-accent-600/20 p-1 rounded-2xl">
                     <div className="w-full h-full bg-white rounded-xl overflow-hidden">
-                      <iframe
-                        src="https://www.youtube.com/embed/Ys-nkZLgj9w"
+                      <LiteYouTube
+                        videoId="Ys-nkZLgj9w"
                         title="PeakAI LinkedIn Phone Finder Demo"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
                         className="w-full h-full"
-                        loading="lazy"
-                      ></iframe>
+                      />
                     </div>
                   </div>
                   <div className="absolute -inset-4 bg-accent-600/10 blur-xl -z-10"></div>

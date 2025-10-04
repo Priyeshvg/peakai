@@ -134,10 +134,10 @@ export default function RootLayout({
         />
       </head>
       <body className={`${inter.variable} font-sans antialiased`}>
-        {/* Microsoft Clarity */}
+        {/* Microsoft Clarity - Lazy load for better performance */}
         <Script
           id="microsoft-clarity"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
           dangerouslySetInnerHTML={{
             __html: `
               (function(c,l,a,r,i,t,y){
@@ -149,14 +149,14 @@ export default function RootLayout({
           }}
         />
 
-        {/* Google Ads Conversion Tracking */}
+        {/* Google Ads Conversion Tracking - Lazy load for better performance */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=AW-17139273262"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
         <Script
           id="google-ads"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
           dangerouslySetInnerHTML={{
             __html: `
               window.dataLayer = window.dataLayer || [];
