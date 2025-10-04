@@ -153,54 +153,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }
 
   // ============================================
-  // MSME DIRECTORY PAGES
+  // MSME DIRECTORY PAGES (Static list to avoid timeout)
   // ============================================
-  let msmeRoutes: MetadataRoute.Sitemap = []
+  const msmeStates = [
+    'andhra-pradesh', 'arunachal-pradesh', 'assam', 'bihar', 'chhattisgarh',
+    'goa', 'gujarat', 'haryana', 'himachal-pradesh', 'jharkhand',
+    'karnataka', 'kerala', 'madhya-pradesh', 'maharashtra', 'manipur',
+    'meghalaya', 'mizoram', 'nagaland', 'odisha', 'punjab',
+    'rajasthan', 'sikkim', 'tamil-nadu', 'telangana', 'tripura',
+    'uttar-pradesh', 'uttarakhand', 'west-bengal', 'delhi', 'jammu-kashmir',
+    'ladakh', 'andaman-nicobar', 'chandigarh', 'dadra-nagar-haveli', 'lakshadweep', 'puducherry'
+  ]
 
-  try {
-    const EC2_API_URL = process.env.EC2_API_URL || 'http://3.108.55.217:3000'
-
-    // Fetch all states
-    const statesRes = await fetch(`${EC2_API_URL}/api/enterprises/states`, {
-      cache: 'no-store',
-    })
-
-    if (statesRes.ok) {
-      const states = await statesRes.json()
-
-      // Add state pages
-      for (const state of states) {
-        msmeRoutes.push({
-          url: `${baseUrl}/${state.state_slug}`,
-          lastModified: currentDate,
-          changeFrequency: 'weekly' as const,
-          priority: 0.7,
-        })
-
-        // Fetch cities for each state (limit to top 20 per state for sitemap size)
-        const citiesRes = await fetch(`${EC2_API_URL}/api/enterprises/cities/${state.state_slug}`, {
-          cache: 'no-store',
-        })
-
-        if (citiesRes.ok) {
-          const cities = await citiesRes.json()
-          const topCities = cities.slice(0, 20) // Top 20 cities per state
-
-          for (const city of topCities) {
-            msmeRoutes.push({
-              url: `${baseUrl}/${state.state_slug}/${city.city_slug}`,
-              lastModified: currentDate,
-              changeFrequency: 'weekly' as const,
-              priority: 0.6,
-            })
-          }
-        }
-      }
-    }
-  } catch (error) {
-    console.error('Error fetching MSME routes for sitemap:', error)
-    // Continue without MSME routes if there's an error
-  }
+  const msmeRoutes: MetadataRoute.Sitemap = msmeStates.map(state => ({
+    url: `${baseUrl}/${state}`,
+    lastModified: currentDate,
+    changeFrequency: 'weekly' as const,
+    priority: 0.7,
+  }))
 
   // ============================================
   // COMBINE ALL ROUTES

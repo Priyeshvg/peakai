@@ -13,6 +13,9 @@ export default function robots(): MetadataRoute.Robots {
         ],
       },
     ],
-    sitemap: 'https://thepeakai.com/sitemap.xml',
+    sitemap: [
+      'https://thepeakai.com/sitemap.xml',
+      'https://thepeakai.com/sitemap-msme.xml',
+    ],
   }
 }
